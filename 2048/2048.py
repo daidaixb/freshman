@@ -1,4 +1,4 @@
-#_*_ coding:utf-8 _*_
+# _*_ coding: utf-8 _*_
 
 import curses
 from random import randrange, choice
@@ -97,8 +97,9 @@ class GameField(object):
 		return not any(self.move_is_possible(move) for move in actions)
 		
 	def draw(self, screen):
-		help_string1 = 'UP(W) DOWN(S) LEFT(A) RIGHT(D)'
-		help_string2 = '     RESTART(R)  EXIT(Q)'
+		title_string = '         Xiao Zhu Zai\n'
+		help_string1 = 'Up(W) Down(S) Left(A) Right(D)'
+		help_string2 = '     Restart(R)  Exit(Q)'
 		gameover_string = '          GAME OVER'
 		win_string = '         YOU WIN!'
 
@@ -118,13 +119,16 @@ class GameField(object):
 			cast(''.join('|{: ^5} '.format(num) if num > 0 else '|      ' for num in row )+ '|')
 
 		screen.clear()
+		cast(title_string)
 		cast('SCORE: ' + str(self.score))
 		if 0 != self.highscore:
 			cast('HIGHSCORE: ' + str(self.highscore))
+		# cast('\n')
 		for row in self.field:
 			draw_hor_separator()
 			draw_row(row)
 		draw_hor_separator()
+		# cast('\n')
 		if self.is_win():
 			cast(win_string)
 		elif self.is_gameover():
@@ -159,22 +163,22 @@ class GameField(object):
 		
 
 
-def main(stdscr):
+def main(scr):
 	def init():
 		game_field.reset()
 		return 'GAME'
 
 	def not_game(state):
-		game_field.draw(stdscr)
-		action = get_user_action(stdscr)
+		game_field.draw(scr)
+		action = get_user_action(scr)
 		responses = defaultdict(lambda: state)
 		responses['RESTART'] = 'INIT'
 		responses['EXIT'] = 'EXIT'
 		return responses[action]
 
 	def game():
-		game_field.draw(stdscr)
-		action = get_user_action(stdscr)
+		game_field.draw(scr)
+		action = get_user_action(scr)
 
 		if action == 'RESTART':
 			return 'INIT'
@@ -194,7 +198,8 @@ def main(stdscr):
 		'GAME': game
 	}
 
-	curses.use_default_colors()
+	# curses.start_colors()
+	# curses.use_default_colors()
 	game_field = GameField()
 
 	state = 'INIT'
@@ -202,4 +207,14 @@ def main(stdscr):
 	while state != 'EXIT':
 		state = state_actions[state]()
 
-curses.wrapper(main)
+	# curses.nocbreak()
+	# curses.echo()
+	# curses.endwin()
+
+scr = curses.initscr()
+# curses.noecho()
+# curses.cbreak()
+scr = curses.newwin(50,50,1,23)
+main(scr)
+curses.endwin()
+# curses.wrapper(main)
