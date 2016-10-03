@@ -19,12 +19,12 @@ Example:
 import os
 
 from docopt import docopt
-
+from datetime import date
 from 12306functions import generate_stations
 
 if not os.path.exists('stations.py'):
     generate_stations()
-from .dat/stations import stations
+from stations import stations
 
 
 FROM_STATION_NOT_FOUND = 'From station not found.'
@@ -37,7 +37,24 @@ def cli():
     arguments = docopt(__doc__)
     from_station = stations.get(arguments['<from>'], FROM_STATION_NOT_FOUND)
     to_station = stations.get(arguments['<to>'], TO_STATION_NOT_FOUND)
-    date = arguments['<date>']
+    date_query = arguments['<date>']
+
+
+class TrainQuery:
+    """Class for Train Query"""
+    def __init__(self, from_station, to_station, date_query, opts=None):
+        self._from_station = from_station
+        self._to_station = to_station
+        self._date = date_query
+        self._opts = opts
+
+    def __repr__(self):
+        return 'TrainQuery from={0} to={} date={}'.format(self._to_station, self._to_station, self._date)
+
+    @property
+    def satations(self):
+
+
 
 
 if __name__ == '__main__':
