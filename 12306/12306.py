@@ -17,7 +17,8 @@ Example:
 """
 
 import os
-
+import tempfile
+import re
 from docopt import docopt
 from datetime import date
 from 12306functions import generate_stations
@@ -41,10 +42,11 @@ def cli():
 
 
 class TrainQuery:
-    """Class for Train Query"""
+    """Class for Train Querying"""
     def __init__(self, from_station, to_station, date_query, opts=None):
         self._from_station = from_station
         self._to_station = to_station
+        assert isinstance(date_query, object)
         self._date = date_query
         self._opts = opts
 
@@ -53,7 +55,20 @@ class TrainQuery:
 
     @property
     def satations(self):
+        filename = 'stations.cache'
+        _cache_file = os.environ.get('STATIONS_CACHE', os.path.join(tempfile.gettempdir(), filename))
+        if os.path.exists(_cache_file):
+            try:
+                with open(_cache_file, 'rb') as f:
+                    return pickle.load(f)
+            except:
+                pass
 
+        filepath = os.path.join(os.path.dirname(__file__), 'data', 'stations.dat')
+        d = {}
+        with open(filepath, 'r', encoding='utf8') as f:
+            for line in f.readlines():
+                name,
 
 
 

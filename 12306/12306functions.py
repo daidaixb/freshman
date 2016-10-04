@@ -43,7 +43,8 @@ def translate_date(date_input):
     # result1 = re.match(r'((\d\d)?(?P<year>\d\d))?(?P<month>([0]?\d)|(11|12))(?P<day>([012]?\d)|(30|31))$', date_input)
     result = re.match(
         r'((\d\d)?(?P<year>\d\d)[-/\\.]?)?(?P<month>((1[012])|[0]?[1-9]))[-/\\.]?(?P<day>([12]\d)|(30|31)|0?[1-9])',
-        date_input)
+        date_input
+    )
     today = date.today()
     period_max = 59
 
