@@ -89,6 +89,7 @@ class TrainsCollection(object):
                 pt.add_row(train)
         print(pt)
 
+
 def generate_stations() -> object:
     """
     Fetch the code of each railway station from 12306.cn
@@ -100,7 +101,7 @@ def generate_stations() -> object:
     r = requests.get(url, verify=False)
     pattern = re.compile(r'([\u4e00-\u9fa5]+)\|([A-Z]+)\|([a-z]+)')
     find_results = pattern.finditer(r.text)
-    assert find_results is True, 'No match in generating stations dict'
+    assert find_results is not None, 'No match in generating stations dict'
     stations = {}
     for i in find_results:
         stations[i.group(1)] = i.group(2)
@@ -182,4 +183,4 @@ colored = Colored()
 
 if __name__ == '__main__':
     print(translate_date('161120'))
-    # generate_stations()
+    generate_stations()

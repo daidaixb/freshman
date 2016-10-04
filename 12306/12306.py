@@ -22,6 +22,8 @@ import re
 import requests
 from docopt import docopt
 from datetime import date
+from collections import OrderedDict
+
 # try:
 #     import cPickle as pickle
 # except ImportError:
@@ -29,7 +31,7 @@ from datetime import date
 # from functions.py import exit_after_echo, translate_date, TrainsCollections
 # if not os.path.exists('stations.py'):
 #     generate_stations()
-from functions import exit_after_echo, translate_date, TrainsCollections
+from functions import exit_after_echo, translate_date, TrainsCollection
 from stations import stations
 
 QUERY_URL = 'https://kyfw.12306.cn/otn/lcxxcx/query'
@@ -46,7 +48,7 @@ def cli():
     from_station = arguments['<from>']
     to_station = arguments['<to>']
     date_query = arguments['<date>']
-    return TrainQuery(from_station, to_station, translate_date(date_query))
+    return TrainQuery(from_station, to_station, translate_date(date_query).isoformat()).query()
 
 
 class TrainQuery:
@@ -58,7 +60,7 @@ class TrainQuery:
         """
         self._from_station = from_station
         self._to_station = to_station
-        assert isinstance(date_query, object)
+        # assert isinstance(date_query, object)
         self._date_query = date_query
         self._opts = opts
 
@@ -103,8 +105,11 @@ class TrainQuery:
         return code
 
     def query(self):
-        params = {'purpose_codes': 'ADULT', 'queryDate': self._date_query.isoformat,
-                  'from_station': self._from_station_code, 'to_station': self._to_station_code}
+        params = OrderedDict()
+        params['purpose_codes'] = 'ADULT'
+        params['queryDate'] = self._date_query
+        params['from_station'] = self._from_station_code
+        params['to_station'] = self._to_station_code
 
         r = requests.get(QUERY_URL, params=params, verify=False)
 
@@ -115,7 +120,7 @@ class TrainQuery:
         except TypeError:
             exit_after_echo(NO_RESPONSE)
 
-        return TrainsCollection(rows, self.opts)
+        return TrainsCollection(rows, self._opts)
 
 if __name__ == '__main__':
-    cli()
+    cli().pretty_print()
