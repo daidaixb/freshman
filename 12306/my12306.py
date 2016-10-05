@@ -24,9 +24,24 @@ try:
 except ImportError:
     import pickle
 from docopt import docopt
+<<<<<<< HEAD:12306/my12306.py
 # from datetime import date
 from functions import exit_after_echo, translate_date, TrainsCollection, generate_stations
 
+=======
+from datetime import date
+from collections import OrderedDict
+
+# try:
+#     import cPickle as pickle
+# except ImportError:
+#     import pickle
+# from functions.py import exit_after_echo, translate_date, TrainsCollections
+# if not os.path.exists('stations.py'):
+#     generate_stations()
+from functions import exit_after_echo, translate_date, TrainsCollection
+from stations import stations
+>>>>>>> 087b85605ad3f9cc609301f224343dff806638a2:12306/12306.py
 
 QUERY_URL = 'https://kyfw.12306.cn/otn/lcxxcx/query'
 
@@ -48,9 +63,20 @@ def cli():
 class TrainQuery:
     """Class for Train Querying"""
     def __init__(self, from_station, to_station, date_query, opts=None):
+<<<<<<< HEAD:12306/my12306.py
         self.from_station = from_station
         self.to_station = to_station
         self.date_query = date_query
+=======
+        """
+
+        :type from_station: str
+        """
+        self._from_station = from_station
+        self._to_station = to_station
+        # assert isinstance(date_query, object)
+        self._date_query = date_query
+>>>>>>> 087b85605ad3f9cc609301f224343dff806638a2:12306/12306.py
         self._opts = opts
         datapath = os.path.join(os.path.dirname(__file__), 'stations.dat')
         if not os.path.exists(datapath):
@@ -102,9 +128,15 @@ class TrainQuery:
     def query(self):
         params = OrderedDict()
         params['purpose_codes'] = 'ADULT'
+<<<<<<< HEAD:12306/my12306.py
         params['queryDate'] = self.date_query
         params['from_station'] = self.from_station_code
         params['to_station'] = self.to_station_code
+=======
+        params['queryDate'] = self._date_query
+        params['from_station'] = self._from_station_code
+        params['to_station'] = self._to_station_code
+>>>>>>> 087b85605ad3f9cc609301f224343dff806638a2:12306/12306.py
 
         r = requests.get(QUERY_URL, params=params, verify=False)
 
