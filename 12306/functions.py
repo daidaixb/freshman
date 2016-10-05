@@ -1,6 +1,12 @@
+# _*_coding: 'utf8' _*_
+
 import re
 import requests
-import sys
+import os
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 from datetime import date
 # import datetime
 from codecs import open
@@ -16,7 +22,7 @@ class TrainsCollection(object):
 
     headers = '车次 车站 时间 历时 商务 一等 二等 软卧 硬卧 软座 硬座 无座'.split()
 
-    def __init__(self, rows, opts):
+    def __init__(self, rows, opts=None):
         self._rows = rows
         self._opts = opts
 
@@ -100,20 +106,15 @@ def generate_stations() -> object:
     r = requests.get(url, verify=False)
     pattern = re.compile(r'([\u4e00-\u9fa5]+)\|([A-Z]+)\|([a-z]+)')
     find_results = pattern.finditer(r.text)
-    assert find_results is True, 'No match in generating stations dict'
+    assert find_results is not None, 'No match in generating stations dict'
+
     stations = {}
     for i in find_results:
         stations[i.group(1)] = i.group(2)
         stations[i.group(3)] = i.group(2)
 
-    temp = sys.stdout
-    with open('stations.py', 'w', 'utf8') as f:
-        sys.stdout = f
-        print('# _*_coding: utf-8 _*_')
-        print('stations = ', end='')
-        print(stations)
-    assert isinstance(temp, object)
-    sys.stdout = temp
+    with open('stations.dat', 'wb') as f:
+        pickle.dump(stations, f)
 
 
 def translate_date(date_input):
@@ -123,7 +124,6 @@ def translate_date(date_input):
     :param date_input: One string, such as '20161001', '10-3', '161004'
     :return: A datetime.date object as the date input
     """
-    # result1 = re.match(r'((\d\d)?(?P<year>\d\d))?(?P<month>([0]?\d)|(11|12))(?P<day>([012]?\d)|(30|31))$', date_input)
     result = re.match(
         r'((\d\d)?(?P<year>\d\d)[-/\\.]?)?(?P<month>((1[012])|[0]?[1-9]))[-/\\.]?(?P<day>([12]\d)|(30|31)|0?[1-9])',
         date_input
@@ -182,4 +182,4 @@ colored = Colored()
 
 if __name__ == '__main__':
     print(translate_date('161120'))
-    # generate_stations()
+    generate_stations()
