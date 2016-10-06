@@ -24,7 +24,6 @@ try:
 except ImportError:
     import pickle
 from docopt import docopt
-# from datetime import date
 from functions import exit_after_echo, translate_date, TrainsCollection, generate_stations
 
 

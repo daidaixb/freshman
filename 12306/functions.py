@@ -125,7 +125,7 @@ def translate_date(date_input):
     :return: A datetime.date object as the date input
     """
     result = re.match(
-        r'((\d\d)?(?P<year>\d\d)[-/\\.]?)?(?P<month>((1[012])|[0]?[1-9]))[-/\\.]?(?P<day>([12]\d)|(30|31)|0?[1-9])',
+        r'((20)?(?P<year>1[6789])[-/\\.]?)?(?P<month>((1[012])|[0]?[1-9]))[-/\\.]?(?P<day>([12]\d)|(30|31)|0?[1-9])',
         date_input
     )
     today = date.today()
