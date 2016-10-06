@@ -108,10 +108,7 @@ def generate_stations() -> object:
     pattern = re.compile(r'([\u4e00-\u9fa5]+)\|([A-Z]+)\|([a-z]+)')
     find_results = pattern.finditer(r.text)
     assert find_results is not None, 'No match in generating stations dict'
-<<<<<<< HEAD
 
-=======
->>>>>>> 087b85605ad3f9cc609301f224343dff806638a2
     stations = {}
     for i in find_results:
         stations[i.group(1)] = i.group(2)
