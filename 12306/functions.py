@@ -8,7 +8,6 @@ try:
 except ImportError:
     import pickle
 from datetime import date
-# import datetime
 from codecs import open
 
 from prettytable import PrettyTable
@@ -108,10 +107,7 @@ def generate_stations() -> object:
     pattern = re.compile(r'([\u4e00-\u9fa5]+)\|([A-Z]+)\|([a-z]+)')
     find_results = pattern.finditer(r.text)
     assert find_results is not None, 'No match in generating stations dict'
-<<<<<<< HEAD
 
-=======
->>>>>>> 087b85605ad3f9cc609301f224343dff806638a2
     stations = {}
     for i in find_results:
         stations[i.group(1)] = i.group(2)
@@ -129,7 +125,7 @@ def translate_date(date_input):
     :return: A datetime.date object as the date input
     """
     result = re.match(
-        r'((\d\d)?(?P<year>\d\d)[-/\\.]?)?(?P<month>((1[012])|[0]?[1-9]))[-/\\.]?(?P<day>([12]\d)|(30|31)|0?[1-9])',
+        r'((20)?(?P<year>1[6789])[-/\\.]?)?(?P<month>((1[012])|[0]?[1-9]))[-/\\.]?(?P<day>([12]\d)|(30|31)|0?[1-9])',
         date_input
     )
     today = date.today()
