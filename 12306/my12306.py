@@ -13,7 +13,7 @@ Options:
     -z              直达
 
 Example:
-    12306 from beijing to shanghai 160508
+    python my12306.py beijing shanghai 160508
 """
 
 import os
