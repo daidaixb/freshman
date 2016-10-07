@@ -39,17 +39,18 @@ class GameField(object):
         self.win_value = win
         self.score = 0
         self.high_score = 0
-        if os.path.exists(filepath):
-            with open(filepath, 'rb') as f:
+        if os.path.exists(self.filepath):
+            with open(self.filepath, 'rb') as f:
+                # assert isinstance(pickle.load(f), int), 'load the highest score failed'
                 self.high_score = pickle.load(f)
         else:
-            with open(filepath, 'wb') as f:
+            with open(self.filepath, 'wb') as f:
                 pickle.dump(self.high_score, f)
         self.reset()
 
     def reset(self):
-        if self.score > self.high_score:
-            self.high_score = self.score
+        # if self.score > self.high_score:
+        #     self.high_score = self.score
         self.score = 0
         # self.field = [[0 for i in range(self.width)] for j in range(self.height)]
         # self.field = [[0] * self.width] * self.height
@@ -57,14 +58,17 @@ class GameField(object):
         self.spawn()
         self.spawn()
 
-    def save_highest_score(self):
-        f = open(filepath, 'rb')
-        if self.high_score < pickle.load(f):
+    def do_highest_score(self):
+        f = open(self.filepath, 'rb')
+        highest = pickle.load(f)
+        if self.score > highest:
+            self.high_score = self.score
             f.close()
-            with open(filepath, 'wb') as f:
+            with open(self.filepath, 'wb') as f:
                 pickle.dump(self.high_score, f)
-        else:
-            f.close()
+        # else:
+            # self.high_score = highest
+            # f.close()
 
     def spawn(self):
         new_element = 4 if randrange(100) > 89 else 2
@@ -185,7 +189,6 @@ def main(stdscr):
         return 'GAME'
 
     def not_game(state):
-        game_field.save_highest_score()
         game_field.draw(stdscr)
         action = get_user_action(stdscr)
         responses = defaultdict(lambda: state)
@@ -198,13 +201,17 @@ def main(stdscr):
         action = get_user_action(stdscr)
 
         if action == 'RESTART':
+            game_field.do_highest_score()
             return 'INIT'
         if action == 'EXIT':
+            game_field.do_highest_score()
             return 'EXIT'
         if game_field.move(action):
             if game_field.is_win():
+                game_field.do_highest_score()
                 return 'WIN'
             if game_field.is_gameover():
+                game_field.do_highest_score()
                 return 'GAMEOVER'
         return 'GAME'
 
