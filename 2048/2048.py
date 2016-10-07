@@ -1,8 +1,13 @@
 # _*_ coding: utf-8 _*_
 
 import curses
+import os
 from random import randrange, choice
 from collections import defaultdict
+try:
+    from cPickle import pickle
+except ImportError:
+    import pickle
 
 letter_codes = [ord(ch) for ch in 'WSADRQwsadrq']
 actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'RESTART', 'EXIT']
@@ -26,12 +31,20 @@ def invert(field):
 
 
 class GameField(object):
+    filepath = os.path.join(os.path.dirname(__file__), 'highest_score.dat')
+
     def __init__(self, height=4, width=4, win=2048):
         self.height = height
         self.width = width
         self.win_value = win
         self.score = 0
         self.high_score = 0
+        if os.path.exists(filepath):
+            with open(filepath, 'rb') as f:
+                self.high_score = pickle.load(f)
+        else:
+            with open(filepath, 'wb') as f:
+                pickle.dump(self.high_score, f)
         self.reset()
 
     def reset(self):
@@ -43,6 +56,15 @@ class GameField(object):
         self.field = [[0] * self.width for i in range(self.height)]
         self.spawn()
         self.spawn()
+
+    def save_highest_score(self):
+        f = open(filepath, 'rb')
+        if self.high_score < pickle.load(f):
+            f.close()
+            with open(filepath, 'wb') as f:
+                pickle.dump(self.high_score, f)
+        else:
+            f.close()
 
     def spawn(self):
         new_element = 4 if randrange(100) > 89 else 2
@@ -75,9 +97,7 @@ class GameField(object):
             return tighten(merge(tighten(row2move)))
 
         moves = {'LEFT': lambda field: [move_row_left(row) for row in field]}
-        # moves['RIGHT'] = lambda field: [move_row_left(row) for row in invert(field)]
         moves['RIGHT'] = lambda field: invert(moves['LEFT'](invert(field)))
-        # moves['UP'] = lambda field: [move_row_left(row) for row in transpose(field)]
         moves['UP'] = lambda field: transpose(moves['LEFT'](transpose(field)))
         moves['DOWN'] = lambda field: transpose(moves['RIGHT'](transpose(field)))
 
@@ -120,8 +140,8 @@ class GameField(object):
         screen.clear()
         cast(title_string)
         cast('SCORE: ' + str(self.score))
-        if 0 != self.high_score:
-            cast('HIGHSCORE: ' + str(self.high_score))
+        # if 0 != self.high_score:
+        cast('HIGHSCORE: ' + str(self.high_score))
         # cast('\n')
         for row in self.field:
             draw_hor_separator()
@@ -165,6 +185,7 @@ def main(stdscr):
         return 'GAME'
 
     def not_game(state):
+        game_field.save_highest_score()
         game_field.draw(stdscr)
         action = get_user_action(stdscr)
         responses = defaultdict(lambda: state)
