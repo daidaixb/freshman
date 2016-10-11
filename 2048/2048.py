@@ -24,14 +24,14 @@ def get_user_action(keyboard):
 
 def load_level(screen):
     screen.clear()
-    info_string1 = 'Please type the number to choose the difficulty of the game:'
-    info_string2 = '1 - EASY(1024)    2 - NORMAL(2048)     3 - HARD(4096)'
-    screen.addstr(info_string1 + '\n' + info_string2)
+    info_string1 = 'Please type the number to choose:\n'
+    info_string2 = '1 - EASY(1024)\n\n2 - NORMAL(2048)\n\n3 - HARD(4096)'
+    screen.addstr('\n' + info_string1 + '\n' + info_string2)
     level = 'N'
     while level not in ('EASY', 'NORMAL', 'HARD'):
         level = get_user_action(screen)
     # screen.clear()
-    return choice
+    return level
 
 
 def transpose(field):
@@ -264,8 +264,8 @@ def main(stdscr):
 scr = curses.initscr()
 curses.noecho()
 curses.cbreak()
-# scr = curses.newwin(60, 60, 1, 23)
-scr = curses.newwin(50, 70)
+scr = curses.newwin(60, 60, 1, 23)
+#  scr = curses.newwin(50, 70)
 main(scr)
 curses.endwin()
 # curses.wrapper(main)
