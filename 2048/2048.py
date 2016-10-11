@@ -9,9 +9,9 @@ try:
 except ImportError:
     import pickle
 
-letter_codes = [ord(ch) for ch in 'WSADBRQwsadbrq']
+letter_codes = [ord(ch) for ch in 'WSADBRQwsadbrq123']
 actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'LAST', 'RESTART', 'EXIT']
-actions_dict = dict(zip(letter_codes, actions * 2))
+actions_dict = dict(zip(letter_codes, actions * 2 + ['EASY', 'NORMAL', 'HARD']))
 # zip: return a list of tuple  #
 
 
@@ -32,15 +32,17 @@ def invert(field):
 
 class GameField(object):
     filepath = os.path.join(os.path.dirname(__file__), 'highest_score.dat')
+    win_scores = {'EASY': 1024, 'NORMAL': 2048, 'HARD': 4096}
 
-    def __init__(self, height=4, width=4, win=2048):
+    def __init__(self, height=4, width=4, level='MEDIUM'):
         self.height = height
         self.width = width
         self.field = None
         self.last_field = None
-        self.win_value = win
-        self.score = 0
-        self.high_score = 0
+        self.level = level
+        self.win_value = None
+        self.score = None
+        self.high_score = {'EASY': 0, 'NORMAL': 0, 'HARD': 0}
         if os.path.exists(self.filepath):
             with open(self.filepath, 'rb') as f:
                 # assert isinstance(pickle.load(f), int), 'load the highest score failed'
@@ -50,9 +52,11 @@ class GameField(object):
                 pickle.dump(self.high_score, f)
         self.reset()
 
-    def reset(self):
+    def reset(self, level):
         # if self.score > self.high_score:
         #     self.high_score = self.score
+        self.level = level
+        self.win_value = self.win_scores[level]
         self.score = 0
         # self.field = [[0 for i in range(self.width)] for j in range(self.height)]
         # self.field = [[0] * self.width] * self.height
@@ -63,7 +67,7 @@ class GameField(object):
     def do_highest_score(self):
         f = open(self.filepath, 'rb')
         highest = pickle.load(f)
-        if self.score > highest:
+        if self.score[self.level] > highest[self.level]:
             self.high_score = self.score
             f.close()
             with open(self.filepath, 'wb') as f:
@@ -122,8 +126,19 @@ class GameField(object):
     def is_gameover(self):
         return not any(self.move_is_possible(move) for move in actions)
 
+    def load_level(self, screen):
+        info_string1 = 'Please type the number to choose the difficulty of the game:'
+        info_string2 = '1 - EASY(1024)    2 - NORMAL(2048)     3 - HARD(4096)'
+        screen.addstr(info_string1 + '\n' + info_string2)
+        choice = get_user_action(screen)
+        if choice in ('EASY', 'NORMAL', 'HARD'):
+            return choice
+        else:
+            return None
+
     def draw(self, screen):
-        title_string = '         Xiao Zhu Zai\n'
+        title_string1 = '         Xiao Zhu Zai\n'
+        title_string2 = 'Current difficulty: {}'.format(self.win_value)
         help_string1 = 'Up(W) Down(S) Left(A) Right(D)'
         help_string2 = '  Back(B) Restart(R) Exit(Q)'
         gameover_string = '          GAME OVER'
@@ -145,10 +160,11 @@ class GameField(object):
             cast(''.join('|{: ^5} '.format(num) if num > 0 else '|      ' for num in row )+ '|')
 
         screen.clear()
-        cast(title_string)
+        cast(title_string1)
+        cast(title_string2)
         cast('SCORE: ' + str(self.score))
         # if 0 != self.high_score:
-        cast('HIGHSCORE: ' + str(self.high_score))
+        cast('HIGHSCORE: ' + str(self.high_score[self.level]))
         # cast('\n')
         for row in self.field:
             draw_hor_separator()
