@@ -21,6 +21,17 @@ def get_user_action(keyboard):
         char = keyboard.getch()
     return actions_dict[char]
 
+def load_level(screen):
+    screen.clear()
+    info_string1 = 'Please type the number to choose the difficulty of the game:'
+    info_string2 = '1 - EASY(1024)    2 - NORMAL(2048)     3 - HARD(4096)'
+    screen.addstr(info_string1 + '\n' + info_string2)
+    choice = 'N'
+    while choice not in ('EASY', 'NORMAL', 'HARD'):
+        choice = get_user_action(screen)
+    # screen.clear()
+    return choice
+
 
 def transpose(field):
     return [list(row) for row in zip(*field)]
@@ -50,7 +61,7 @@ class GameField(object):
         else:
             with open(self.filepath, 'wb') as f:
                 pickle.dump(self.high_score, f)
-        self.reset()
+        # self.reset()
 
     def reset(self, level):
         # if self.score > self.high_score:
@@ -67,8 +78,8 @@ class GameField(object):
     def do_highest_score(self):
         f = open(self.filepath, 'rb')
         highest = pickle.load(f)
-        if self.score[self.level] > highest[self.level]:
-            self.high_score = self.score
+        if self.score > highest[self.level]:
+            self.high_score[self.level] = self.score
             f.close()
             with open(self.filepath, 'wb') as f:
                 pickle.dump(self.high_score, f)
@@ -126,23 +137,15 @@ class GameField(object):
     def is_gameover(self):
         return not any(self.move_is_possible(move) for move in actions)
 
-    def load_level(self, screen):
-        info_string1 = 'Please type the number to choose the difficulty of the game:'
-        info_string2 = '1 - EASY(1024)    2 - NORMAL(2048)     3 - HARD(4096)'
-        screen.addstr(info_string1 + '\n' + info_string2)
-        choice = get_user_action(screen)
-        if choice in ('EASY', 'NORMAL', 'HARD'):
-            return choice
-        else:
-            return None
+
 
     def draw(self, screen):
-        title_string1 = '         Xiao Zhu Zai\n'
-        title_string2 = 'Current difficulty: {}'.format(self.win_value)
+        title_string = '         Xiao Zhu Zai\n'
+        target_string = 'TARGET: {}'.format(self.win_value)
         help_string1 = 'Up(W) Down(S) Left(A) Right(D)'
         help_string2 = '  Back(B) Restart(R) Exit(Q)'
         gameover_string = '          GAME OVER'
-        win_string = '         YOU WIN!'
+        win_string = '           YOU WIN!'
 
         def cast(string):
             screen.addstr(string + '\n')
@@ -160,16 +163,18 @@ class GameField(object):
             cast(''.join('|{: ^5} '.format(num) if num > 0 else '|      ' for num in row )+ '|')
 
         screen.clear()
-        cast(title_string1)
-        cast(title_string2)
+        cast(title_string)
+        # cast(target_string)
         cast('SCORE: ' + str(self.score))
         # if 0 != self.high_score:
         cast('HIGHSCORE: ' + str(self.high_score[self.level]))
+        cast(target_string)
         # cast('\n')
         for row in self.field:
             draw_hor_separator()
             draw_row(row)
         draw_hor_separator()
+        # cast(target_string)
         # cast('\n')
         if self.is_win():
             cast(win_string)
@@ -204,7 +209,8 @@ class GameField(object):
 
 def main(stdscr):
     def init():
-        game_field.reset()
+        level = load_level(stdscr)
+        game_field.reset(level)
         return 'GAME'
 
     def not_game(state):
@@ -259,7 +265,8 @@ def main(stdscr):
 scr = curses.initscr()
 curses.noecho()
 curses.cbreak()
-scr = curses.newwin(50, 50, 1, 23)
+# scr = curses.newwin(60, 60, 1, 23)
+scr = curses.newwin(50, 70)
 main(scr)
 curses.endwin()
 # curses.wrapper(main)
