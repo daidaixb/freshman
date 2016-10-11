@@ -125,7 +125,7 @@ class GameField(object):
     def draw(self, screen):
         title_string = '         Xiao Zhu Zai\n'
         help_string1 = 'Up(W) Down(S) Left(A) Right(D)'
-        help_string2 = ' Back(B) Restart(R)  Exit(Q)'
+        help_string2 = '  Back(B) Restart(R) Exit(Q)'
         gameover_string = '          GAME OVER'
         win_string = '         YOU WIN!'
 
