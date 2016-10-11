@@ -21,14 +21,15 @@ def get_user_action(keyboard):
         char = keyboard.getch()
     return actions_dict[char]
 
+
 def load_level(screen):
     screen.clear()
     info_string1 = 'Please type the number to choose the difficulty of the game:'
     info_string2 = '1 - EASY(1024)    2 - NORMAL(2048)     3 - HARD(4096)'
     screen.addstr(info_string1 + '\n' + info_string2)
-    choice = 'N'
-    while choice not in ('EASY', 'NORMAL', 'HARD'):
-        choice = get_user_action(screen)
+    level = 'N'
+    while level not in ('EASY', 'NORMAL', 'HARD'):
+        level = get_user_action(screen)
     # screen.clear()
     return choice
 
@@ -136,8 +137,6 @@ class GameField(object):
 
     def is_gameover(self):
         return not any(self.move_is_possible(move) for move in actions)
-
-
 
     def draw(self, screen):
         title_string = '         Xiao Zhu Zai\n'
