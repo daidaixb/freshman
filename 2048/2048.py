@@ -159,13 +159,13 @@ class GameField(object):
             # draw_hor_separator.counter += 1
 
         def draw_row(row):
-            cast(''.join('|{: ^5} '.format(num) if num > 0 else '|      ' for num in row )+ '|')
+            cast(''.join('|{: ^5} '.format(num) if num > 0 else '|      ' for num in row) + '|')
 
         screen.clear()
         cast(title_string)
-        cast('SCORE: ' + str(self.score))
+        cast('SCORE: {}'.format(self.score))
         # if 0 != self.high_score:
-        cast('HIGHSCORE: ' + str(self.high_scores[self.level]))
+        cast('HIGHSCORE: {}'.format(self.high_scores.get(self.win_value, 0)))
         cast(target_string)
         for row in self.field:
             draw_hor_separator()
