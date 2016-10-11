@@ -9,8 +9,8 @@ try:
 except ImportError:
     import pickle
 
-letter_codes = [ord(ch) for ch in 'WSADRQwsadrq']
-actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'RESTART', 'EXIT']
+letter_codes = [ord(ch) for ch in 'WSADBRQwsadbrq']
+actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'LAST', 'RESTART', 'EXIT']
 actions_dict = dict(zip(letter_codes, actions * 2))
 # zip: return a list of tuple  #
 
@@ -36,6 +36,8 @@ class GameField(object):
     def __init__(self, height=4, width=4, win=2048):
         self.height = height
         self.width = width
+        self.field = None
+        self.last_field = None
         self.win_value = win
         self.score = 0
         self.high_score = 0
@@ -107,6 +109,7 @@ class GameField(object):
 
         if direction in moves:
             if self.move_is_possible(direction):
+                self.last_field = self.field
                 self.field = moves[direction](self.field)
                 self.spawn()
                 return True
@@ -122,7 +125,7 @@ class GameField(object):
     def draw(self, screen):
         title_string = '         Xiao Zhu Zai\n'
         help_string1 = 'Up(W) Down(S) Left(A) Right(D)'
-        help_string2 = '     Restart(R)  Exit(Q)'
+        help_string2 = ' Back(B) Restart(R)  Exit(Q)'
         gameover_string = '          GAME OVER'
         win_string = '         YOU WIN!'
 
@@ -206,6 +209,8 @@ def main(stdscr):
         if action == 'EXIT':
             game_field.do_highest_score()
             return 'EXIT'
+        if action == "LAST":
+            game_field.field = game_field.last_field
         if game_field.move(action):
             if game_field.is_win():
                 game_field.do_highest_score()
