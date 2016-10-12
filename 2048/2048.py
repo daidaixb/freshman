@@ -10,8 +10,8 @@ except ImportError:
     import pickle
 
 letter_codes = [ord(ch) for ch in 'WSADBRQwsadbrq123']
-actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'LAST', 'RESTART', 'EXIT']
-levels = {'EASY', 'NORMAL', 'HARD'}
+actions = ('UP', 'DOWN', 'LEFT', 'RIGHT', 'LAST', 'RESTART', 'EXIT')
+levels = ('EASY', 'NORMAL', 'HARD')
 actions_dict = dict(zip(letter_codes[:-3], actions * 2))
 levels_dict = dict(zip(letter_codes[-3:], levels))
 win_score = 2048
@@ -77,12 +77,11 @@ class GameField(object):
         self.spawn()
 
     def do_highest_score(self):
-        f = open(filepath, 'rb')
-        highest = pickle.load(f)
+        with open(filepath, 'rb') as f:
+            highest = pickle.load(f)
 
         if self.score > highest.get(self.win_value, 0):
             self.high_scores[self.win_value] = self.score
-            f.close()
             with open(filepath, 'wb') as f:
                 pickle.dump(self.high_scores, f)
 
