@@ -186,7 +186,7 @@ class GameField(object):
             def change(i):
                 if row[i] == 0 and row[i + 1] != 0:
                     return True
-                elif row[i != 0] and row[i + 1] == row[i]:
+                elif row[i] != 0 and row[i + 1] == row[i]:
                     return True
                 else:
                     return False
