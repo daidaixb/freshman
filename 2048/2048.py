@@ -15,7 +15,7 @@ levels = {'EASY', 'NORMAL', 'HARD'}
 actions_dict = dict(zip(letter_codes[:-3], actions * 2))
 levels_dict = dict(zip(letter_codes[-3:], levels))
 win_score = 2048
-win_scores = {'EASY': win_score / 2, 'NORMAL': win_score, 'HARD': win_score * 2}
+win_scores = {'EASY': win_score // 2, 'NORMAL': win_score, 'HARD': win_score * 2}
 filepath = os.path.join(os.path.dirname(__file__), 'highest_score.dat')
 # zip: return a list of tuple  #
 
@@ -30,7 +30,8 @@ def get_user_action(keyboard):
 def get_user_choice(screen):
     screen.clear()
     info_string1 = 'Please type the number to choose:\n'
-    info_string2 = '1 - EASY(1024)\n\n2 - NORMAL(2048)\n\n3 - HARD(4096)'
+    info_string2 = '1 - EASY({0})\n\n2 - NORMAL({1})\n\n3 - HARD({2})'.format(
+        win_scores['EASY'], win_scores['NORMAL'], win_scores['HARD'])
     screen.addstr('\n' + info_string1 + '\n' + info_string2)
     char = 'N'
     while char not in levels_dict:
@@ -59,7 +60,6 @@ class GameField(object):
         self.high_scores = dict()
         if os.path.exists(filepath):
             with open(filepath, 'rb') as f:
-                # assert isinstance(pickle.load(f), int), 'load the highest score failed'
                 self.high_scores = pickle.load(f)
         else:
             with open(filepath, 'wb') as f:
