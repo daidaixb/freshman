@@ -49,12 +49,12 @@ def invert(field):
 
 class GameField(object):
 
-    def __init__(self, height=4, width=4, level='MEDIUM'):
+    def __init__(self, height=4, width=4):
         self.height = height
         self.width = width
         self.field = None
         self.last_field = None
-        self.level = level
+        # self.level = None
         self.win_value = None
         self.score = None
         self.high_scores = dict()
@@ -66,7 +66,7 @@ class GameField(object):
                 pickle.dump(self.high_scores, f)
 
     def reset(self, level):
-        self.level = level
+        # self.level = level
         self.win_value = win_scores[level]
         self.score = 0
         # self.field = [[0 for i in range(self.width)] for j in range(self.height)]
