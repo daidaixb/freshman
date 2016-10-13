@@ -14,7 +14,7 @@ actions = ('UP', 'DOWN', 'LEFT', 'RIGHT', 'LAST', 'RESTART', 'EXIT')
 levels = ('EASY', 'NORMAL', 'HARD')
 actions_dict = dict(zip(letter_codes[:-3], actions * 2))
 levels_dict = dict(zip(letter_codes[-3:], levels))
-win_score = 2048
+win_score = 4096
 win_scores = {'EASY': win_score // 2, 'NORMAL': win_score, 'HARD': win_score * 2}
 filepath = os.path.join(os.path.dirname(__file__), 'highest_score.dat')
 # zip: return a list of tuple  #
